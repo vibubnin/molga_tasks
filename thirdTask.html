@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Third task</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css" integrity="sha384-PmY9l28YgO4JwMKbTvgaS7XNZJ30MK9FAZjjzXtlqyZCqBY6X6bXIkM++IkyinN+" crossorigin="anonymous">
+  <style>
+    .stopwatch {
+      background: #cc9999;
+      width: 150px;
+      text-align: center;
+      padding: 10px;
+      margin: 20px;
+      border: 1px solid #868080;
+    }
+    p {
+      font-size: 1.8em;
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="stopwatch">
+    <p id="output">00:00:00</p>
+    <div>
+      <button id="startPause" onclick="onStartOrPause()">start</button>
+      <button id="reset" onclick="onReset()">reset</button>
+    </div>
+  </div>
+  <script>
+    let iTime = 0;
+    let bRunning = false;
+
+    const onStartOrPause = () => {
+      if (!bRunning) {
+        bRunning = true;
+        outputTime();
+        document.getElementById('startPause').innerHTML = 'Pause';
+      } else {
+        bRunning = false;
+        document.getElementById('startPause').innerHTML = 'Resume';
+      }
+    };
+
+    const onReset = () => {
+      bRunning = false;
+      iTime = 0;    
+      document.getElementById('startPause').innerHTML = 'Start';
+      setTimeout(function() {
+        document.getElementById('output').innerHTML = "00:00:00:00";
+      }, 100);
+    };
+
+    const prependZero = (value) =>
+      value < 10 ? `0${value}` : value;
+
+    const outputTime = () => {
+      if (bRunning) {
+        setTimeout(function() {
+          iTime++;
+
+          let hours = Math.floor(iTime / 10 / 60 / 60 % 60);
+          let mins = Math.floor(iTime / 10 / 60 % 60);
+          let secs = Math.floor(iTime / 10 % 60);
+          let milSecs = iTime % 10;
+
+          hours =   prependZero(hours);
+          mins =    prependZero(mins);
+          secs =    prependZero(secs);
+          milSecs = prependZero(milSecs);
+
+          document.getElementById('output')
+            .innerHTML = `${hours}:${mins}:${secs}:${milSecs}`;
+
+            outputTime(); 
+        }, 100);
+      }
+    };
+
+    document.onreadystatechange = () =>
+      document.readyState === 'complete' ? onStartOrPause() : null;
+  </script>
+</body>
+</html>

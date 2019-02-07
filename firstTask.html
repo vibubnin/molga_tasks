@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>First task</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css" integrity="sha384-PmY9l28YgO4JwMKbTvgaS7XNZJ30MK9FAZjjzXtlqyZCqBY6X6bXIkM++IkyinN+" crossorigin="anonymous">
+  <style>
+    table {
+      margin: 15px;
+    }
+  </style>
+</head>
+<body>
+  <table class="table table-striped table-condensed table-hover">
+    <thead>
+      <tr>
+        <th>Название файла</th>
+        <th>Язык</th>
+        <th>Ссылка</th>
+      </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+  </table>
+
+  <script>
+    const getData = (url) =>
+      new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+
+        xhr.onload = function() {
+          if (this.status == 200) {
+              resolve(this.response);
+          } else {
+            var error = new Error(this.statusText);
+            error.code = this.status;
+            reject(error);
+          }
+        };
+
+        xhr.onerror = function() {
+          reject(new Error("Network Error"));
+        };
+
+        xhr.send();
+      });
+
+
+    getData('https://api.github.com/gists/public')
+      .then(results => {
+        const aTableData = JSON.parse(results);
+        const oTable = document.querySelector('table');
+        const tBody = oTable.tBodies[0];
+
+        const aRows = [];
+        
+        aTableData.map(element => {
+          for (let fileKey in element.files) {
+            let str = `<tr>
+                        <td>${element.files[fileKey].filename}</td>
+                        <td>${element.files[fileKey].language || ''}</td>
+                        <td><a href="${element.files[fileKey].raw_url}" target="_blank">перейти по ссылке</td>
+                      </tr>`;
+            tBody.insertAdjacentHTML('beforeEnd', str);
+          }
+        });
+      })
+      .catch(console.log);
+
+  </script>
+</body>
+</html>
